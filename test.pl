@@ -1,4 +1,4 @@
-use Test::More tests=>16;
+use Test::More tests=>20;
 
 BEGIN { use_ok( 'Whatif' ); }
 require_ok( 'Whatif' );
@@ -90,22 +90,64 @@ is ($foo,'foo', "nested fail outer");
 my $dd = $$;
 
 whatif {
-
 };
 
 is ($$, $dd, '$$ stays same after successful fork');
 is ($Whatif::ERR, undef, 'undef error message');
+
+my $was = $$;
+my $going;
+whatif {
+	$going = $$;	
+};
+
+is ($going, $was, '$$ is same in whatif block');
+
+
 
 $dd = $$;
 
 whatif {
 	die "Foo\n";
 } ifonly {
-	is ($Whatif::ERR, "Foo\n", 'propgated error message inside ifonly');
+	is ($Whatif::ERR, "Foo\n", 'propogated error message inside ifonly');
 };
 
-is ($Whatif::ERR, "Foo\n", 'propgated error message');
+is ($Whatif::ERR, "Foo\n", 'propogated error message');
 
 is ($$,	$dd, '$$ stays same after unsuccessful fork');
 
+
+
+my $var = 'outer';
+
+whatif {
+	$var = 'middle';
+
+	whatif { $var = 'inner'; };
+
+};
+
+is ($var, 'inner', 'Nested blocks');
+
+
+$var = 'outer';
+
+whatif {
+	$var = 'middle';
+	whatif { $var = 'inner'; die; };
+};
+
+is ($var, 'middle', 'Inner die');
+
+
+$var = 'outer';
+
+whatif {
+    $var = 'middle';
+    whatif { $var = 'inner'; die; };
+	die;
+};
+
+is ($var, 'outer', 'Middle die');
 

@@ -8,7 +8,7 @@ use vars qw(@EXPORT $VERSION $ERR);
 @EXPORT = qw(whatif ifonly);
 
 
-$VERSION = '1.01';
+$VERSION = '1.2';
 
 
 $ERR = undef;
@@ -37,42 +37,42 @@ sub whatif (&;$) {
     if ($pid) {
         close $out;
         my $got = <$in>;
+
         # child succeded, we shut up shop and wait for it to die
-	unless ($got)  {
-		# close all open file handles
-		foreach (0..POSIX::sysconf(&POSIX::_SC_OPEN_MAX)) { 
-		
-			POSIX::close($_);
-		}
+        unless ($got)  {
+            # close all open file handles
+            foreach (0..POSIX::sysconf(&POSIX::_SC_OPEN_MAX)) { 
+                POSIX::close($_);
+            }
 
-		# wait for the child to die so that we can
-		waitpid($pid, 0);
-		POSIX::_exit(0);
-	} 
+            # wait for the child to die so that we can
+            waitpid($pid, 0);
+            POSIX::_exit(0);
+        } 
 
-		$Whatif::ERR = $got; 
 
-		# if we've been given an ifonly block then run it
-		$ifonly->() if (defined $ifonly);
-	
+        # the child failed, set the error ...
+        $Whatif::ERR = $got; 
 
+        # ... and if we've been given an ifonly block then run it
+        $ifonly->() if (defined $ifonly);
+   
 
     # child
     } else { 
         close $in;
-	# run the code we been given
+        # run the code we been given
+
+        # some shennanigans, knicked from PPerl
+        if ($] > 5.006001) {
+            setreadonly('$', $dollardollar);
+        } else {
+            $$ = $dollardollar;
+        }
+    
         eval { $whatif->() };
         print $out $@;
         close $out;
-
-
-  	    if ($] > 5.006001) {
-                setreadonly('$', $dollardollar);
-            }
-            else {
-                $$ = $dollardollar;
-            }
-
 
         POSIX::_exit(0) if $@;
     }
@@ -92,42 +92,55 @@ Whatif - provides rollbacks, second chances and ways to overcomes regrets in cod
 
 =head1 SYNOPSIS
 
-  my $foo = 1;
+  my $foo = "foo";
 
-  whatif {	
-	$foo++;
-  }; # foo is now 2
-
-
-  whatif {
-	$foo++;
-	die;
-  }; # foo is still 2, the call got rolled backed
+  whatif {    
+    $foo = "bar";
+  }; # foo is now "bar"
 
 
   whatif {
-	$foo++;
+    $foo = "quux";
+    die;
+  }; # foo is still "bar", the call got rolled backed
+
+
+  whatif {
+    $foo = "yoo hoo!";
   } ifonly {
-	$foo = -1;
-  }; # foo will be 3
+    $foo = "erk";
+  }; # foo will be "yoo hoo"
 
   whatif {
-	$foo++;
-	die "Aaaargh\n";
+    $foo = "here";
+    die "Aaaargh\n";
   } ifonly {
-	$foo = -2;
-	print Whatif::ERR; # prints Aaaargh
-  }; # foo will be -2
+    $foo = "there";
+    print Whatif::ERR; # prints Aaaargh
+  }; # foo will be "there"
 
   print Whatif::ERR; # also prints Aaaargh
 
   whatif {
-	die;
+    die;
   };
   print Whatif::ERR; # prints undef
 
+  $foo = "outer";
+  whatif {
+    $foo = "middle";
+    whatif { $foo = "inner" };
+  }; # $foo is "inner";
 
-  
+  $foo = "outer";
+  whatif {
+    $foo = "middle";
+    whatif { $foo = "inner"; die };
+  }; # $foo is "middle";
+
+
+      
+B<PLEASE NOTE> the semi-colon after the I<whatif{};> block - without it you may get odd results;
 
 
 =head1 DESCRIPTION
@@ -176,7 +189,7 @@ Then I tried something like
                 perl_free(copy);
         /* ooh, it was fine */
         } else {
-		perl_free(orig);
+        perl_free(orig);
         }
 
   }
