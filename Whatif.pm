@@ -8,7 +8,7 @@ use vars qw(@EXPORT $VERSION $ERR);
 @EXPORT = qw(whatif ifonly);
 
 
-$VERSION = '1.0';
+$VERSION = '1.01';
 
 
 $ERR = undef;
@@ -88,7 +88,7 @@ sub ifonly (&) { $_[0] }
 
 =head1 NAME
 
-Acme::Whatif - provides rollbacks, second chances and ways to overcomes regrets in code
+Whatif - provides rollbacks, second chances and ways to overcomes regrets in code
 
 =head1 SYNOPSIS
 
@@ -127,12 +127,12 @@ Acme::Whatif - provides rollbacks, second chances and ways to overcomes regrets 
   print Whatif::ERR; # prints undef
 
 
-
+  
 
 
 =head1 DESCRIPTION
 
-Acme::Whatif provides database-like rollbacks but for code instead of
+Whatif provides database-like rollbacks but for code instead of
 database transactions. Think of I<whatif {}> blocks as being like
 I<try{} catch{}> blocks but on steroids.
 
@@ -140,10 +140,10 @@ Essentially, if you die within a I<whatif {}> block then all code up
 until that point will be undone. Let's face it we all have regrets and
 if we can't solve them in software then where can we solve them?
 
-But that's not all. Acme::Whatif not only provides a way out of that
+But that's not all. Whatif not only provides a way out of that
 horrible 'OHMYGOD! What have I done?' moments but also gives you a
-second chance using patented 'Guardian Angel[tm]' technology (patent
-pending). 
+second chance using our special sauce 'Guardian Angel[tm]' technology 
+(patent pending). 
 
 Simply place an I<ifonly {}> block after a I<whatif {}> block and,
 should the I<whatif {}> block fail, all the code in the I<ifonly {}>
@@ -191,9 +191,6 @@ control. Basically if you write something to a socket or a file or a DB
 then you're going to have to undo your mess yourself. That's what the
 I<ifonly{}> block is for. There's nothing I can do about that. Deal.
 
-Finally this will mess with your PID (stored in $$) - without messing 
-round with Perl's internals then there's nothing that I can do about that 
-either. Patches welcome.
 
 =head1 NOTES AND THANKS
 
@@ -215,7 +212,8 @@ whilst I tried random things out without the benefit of my own threaded
 
 B<Matt 'hardest working man in perl' Sergeant>'s PPerl provided the code 
 for setting readonly variables thanks to patches from the ever helpful 
-B<Richard Clamp>.
+B<Richard Clamp>. This means that your PID stays the same even after a 
+successful I<whatif {}> block.
 
 I'd also like to thank my make up B<stylist>, my B<publisher> and you, the B<fans>
 for making all this possible.

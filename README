@@ -7,19 +7,19 @@ Have you? HAVE YOU?
 
 I know I have.
 
-Acme::Whatif provides you with that oft requested second chance - simply 
+Whatif provides you with that oft requested second chance - simply 
 die within a whatif {} block and you can have another go AS IF NOTHING  
-HAD HAPPENED. It's like Groundhog Day. All over again. But without the  
-giant subterranean dwelling rodents [0].
+HAD HAPPENED. It's like Groundhog Day. All over again. [0]
 
-Not only that but Acme::Whatif, for a limited time only, provides you   
+Not only that but Whatif, for a limited time only, provides you   
 with a corresponding ifonly {} statement, executed after the death of a 
 whatif {} block, that gives you some breathing space to clean up all the 
 little mishaps and boos boos that you caused in the whatif {} block.
 
 Hand crafted by Artisans from the world famous London.pm Crack Smoking  
-Club Acme::Whatif is the tool no self respecting programmer should be   
+Club Whatif is the tool no self respecting programmer should be   
 without. 
 
-[0] No animals were harmed in the making of this module.
+[0] But without the giant subterranean dwelling rodents [1].
+[1] No animals were harmed in the making of this module.
 
