@@ -1,0 +1,6 @@
+Revision history for Perl extension Acme::Whatif.
+
+0.01  Thu Oct 17 15:27:58 2002
+	- original version; created by h2xs 1.20 with options
+		-X Acme::Whatif
+
