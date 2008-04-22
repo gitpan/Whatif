@@ -8,7 +8,7 @@ use vars qw(@EXPORT $VERSION $ERR);
 @EXPORT = qw(whatif ifonly);
 
 
-$VERSION = '1.2';
+$VERSION = '1.3';
 
 
 $ERR = undef;
